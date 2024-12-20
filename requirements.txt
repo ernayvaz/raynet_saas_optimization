@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+pandas
+python-dotenv
+requests
+pydantic==1.10.10
+psycopg2
+scikit-learn
+xgboost
+
+
+# pip install -r requirements.txt
+# pip freeze   - control code
+
+

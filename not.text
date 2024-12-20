@@ -1,0 +1,42 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from .database import engine, Base, SessionLocal
+from .routes import router
+from .analytics import analyze_data
+from sqlalchemy.orm import Session
+
+# Veritabanı tablolarını oluştur
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI()
+
+# CORS ayarları
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# API rotalarını ekle
+app.include_router(router)
+
+# Kök endpoint
+@app.get("/")
+def read_root():
+    return {"message": "Hello, FastAPI is running successfully!"}
+
+# Uygulama başladığında analizi çalıştır
+@app.on_event("startup")
+def startup_event():
+    db: Session = SessionLocal()
+    try:
+        analyze_data(db)
+    finally:
+        db.close()
