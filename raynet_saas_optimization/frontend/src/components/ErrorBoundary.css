@@ -1,0 +1,8 @@
+/* src/components/ErrorBoundary.css */
+
+.error-boundary {
+    text-align: center;
+    padding: 50px;
+    background-color: #f8d7da;
+    color: #721c24;
+}
