@@ -1,0 +1,10 @@
+2024-12-14 20:11:49,198 - INFO - PostgreSQL bağlantısı başarılı.
+2024-12-14 20:11:49,203 - INFO - Kullanım verileri başarıyla çekildi.
+2024-12-14 20:11:49,208 - INFO - Yeterli veri yok: Kullanıcı ID: 732056B31AF3AF8D3F8037B527D395FD, Lisans: MICROSOFT TEAMS (FREE). Tahmin atlanıyor.
+2024-12-14 20:11:49,209 - INFO - Tüm tahminler başarıyla veritabanına kaydedildi.
+2024-12-14 20:11:49,209 - INFO - PostgreSQL bağlantısı kapatıldı.
+2024-12-16 03:24:41,256 - INFO - PostgreSQL bağlantısı başarılı.
+2024-12-16 03:24:41,289 - INFO - Kullanım verileri başarıyla çekildi.
+2024-12-16 03:24:41,330 - INFO - Yeterli veri yok: Kullanıcı ID: 732056B31AF3AF8D3F8037B527D395FD, Lisans: MICROSOFT TEAMS (FREE). Tahmin atlanıyor.
+2024-12-16 03:24:41,331 - INFO - Tüm tahminler başarıyla veritabanına kaydedildi.
+2024-12-16 03:24:41,332 - INFO - PostgreSQL bağlantısı kapatıldı.
