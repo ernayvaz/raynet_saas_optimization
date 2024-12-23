@@ -1,10 +1,15 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base, SessionLocal
 from .routes import router
 from .analytics import analyze_data
 from sqlalchemy.orm import Session
 import logging
+import os
+from dotenv import load_dotenv
+from fastapi_limiter import FastAPILimiter
+import redis.asyncio as redis
+import aioredis
 
 # Logging ayarları
 logging.basicConfig(level=logging.INFO)
@@ -23,6 +28,11 @@ origins = [
     "http://127.0.0.1:3000",
 ]
 
+# Hata yönetimi ekleyin
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    logger.error(f"An error occurred: {exc}")
+    return {"detail": "Internal Server Error"}
 
 app.add_middleware(
     CORSMiddleware,
@@ -43,16 +53,17 @@ def read_root():
 
 # Uygulama başladığında analizi çalıştır
 @app.on_event("startup")
-def startup_event():
-    logger.info("Uygulama başlatılıyor...")
-    db: Session = SessionLocal()
-    try:
-        analyze_data(db)
-    finally:
-        db.close()
-    logger.info("Analiz tamamlandı.")
+async def startup_event():
+    background_tasks = BackgroundTasks()
+    background_tasks.add_task(analyze_data, SessionLocal())
+    redis = await aioredis.create_redis_pool('redis://localhost')
+    await FastAPILimiter.init(redis)
 
-    # Tüm route'ları listeleme (Debug amacıyla)
-    print("Registered routes:")
-    for route in app.routes:
-        print(f"Path: {route.path}, Name: {route.name}")
+# Ana uygulamada da .env dosyasını yükleyin
+load_dotenv()
+
+# Environment değişkenlerini kontrol edin
+print("Environment variables:")
+print(f"DATABASE_URL: {os.getenv('DATABASE_URL')}")
+#print(f"DB_USER: {os.getenv('DB_USER')}")
+#print(f"DB_HOST: {os.getenv('DB_HOST')}")

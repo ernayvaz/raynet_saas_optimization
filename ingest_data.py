@@ -4,18 +4,27 @@ import json
 from datetime import datetime
 from dotenv import load_dotenv
 import os
+import logging
+
+# Loglama yapılandırması
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # .env dosyasını yükle
 load_dotenv()
 
 # PostgreSQL bağlantı bilgileri
-conn = psycopg2.connect(
-    host="localhost",
-    dbname="raynet_db",
-    user="postgres",
-    password=os.getenv("POSTGRES_PASSWORD")
-)
-cursor = conn.cursor()
+try:
+    conn = psycopg2.connect(
+        host="localhost",
+        dbname="raynet_db",
+        user="postgres",
+        password=os.getenv("POSTGRES_PASSWORD")
+    )
+    cursor = conn.cursor()
+    logging.info("PostgreSQL bağlantısı başarılı.")
+except Exception as e:
+    logging.error(f"PostgreSQL bağlantısı kurulamadı: {e}")
+    exit(1)
 
 # Access Token'ınızı buraya yapıştırın
 access_token =  os.getenv("ACCESS_TOKEN")

@@ -10,6 +10,7 @@ ENV/
 env.bak/
 venv.bak/
 *.dll
+.env
 
 # Node.js
 node_modules/

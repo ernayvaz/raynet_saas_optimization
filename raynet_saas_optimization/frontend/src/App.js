@@ -1,27 +1,29 @@
 // src/App.js
 
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Dashboard from './pages/Dashboard';
-import Layout from './components/Layout';
+import React, { Suspense, lazy } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import LoadingSpinner from './components/LoadingSpinner';
 import ErrorBoundary from './components/ErrorBoundary';
+
+// Lazy loading ile komponentlerin yüklenmesi
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Layout = lazy(() => import('./components/Layout'));
 
 function App() {
     return (
-        <Router>
-            <ErrorBoundary>
-                <Routes>
-                    <Route path="/" element={<Layout />}>
-                        <Route index element={<Dashboard />} />
-                        {/* Henüz oluşturulmamış sayfalar için örnek rotalar */}
-                        {/* <Route path="/about" element={<About />} /> */}
-                        {/* <Route path="/contact" element={<Contact />} /> */}
-                        <Route path="*" element={<Navigate to="/" />} />
-                    </Route>
-                </Routes>
-            </ErrorBoundary>
-        </Router>
+        <ErrorBoundary>
+            <BrowserRouter>
+                <Suspense fallback={<LoadingSpinner />}>
+                    <Routes>
+                        <Route path="/" element={<Layout />}>
+                            <Route index element={<Dashboard />} />
+                            <Route path="*" element={<Navigate to="/" replace />} />
+                        </Route>
+                    </Routes>
+                </Suspense>
+            </BrowserRouter>
+        </ErrorBoundary>
     );
 }
 
-export default App;
+export default React.memo(App);

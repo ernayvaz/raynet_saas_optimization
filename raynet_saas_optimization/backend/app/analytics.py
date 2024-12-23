@@ -19,13 +19,18 @@ def analyze_data(db: Session):
     l = aliased(License)
     
     try:
-        inactive_users = db.query(User, ul, l).\
-            select_from(User).\
-            join(ul, User.user_id == ul.user_id).\
-            join(l, ul.license_id == l.license_id).\
-            filter(
-                or_(ul.last_active_at < threshold_date, ul.last_active_at == None)
-            ).all()
+        inactive_users = (
+            db.query(User, ul, l)
+            .select_from(User)
+            .join(ul, User.user_id == ul.user_id)
+            .join(l, ul.license_id == l.license_id)
+            .filter(or_(ul.last_active_at < threshold_date, ul.last_active_at.is_(None)))
+            .options(
+                selectinload(User.licenses),
+                selectinload(License.users)
+            )
+            .all()
+        )
         print(f"Found {len(inactive_users)} inactive users.")
     except Exception as e:
         print(f"Error during query: {e}")

@@ -2,19 +2,25 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from dotenv import load_dotenv
 import os
-import ctypes
 
-# libpq.dll'in tam yolu (Windows için)
-# ctypes.WinDLL(r"C:\Program Files\PostgreSQL\17\bin\libpq.dll")
+# password.env dosyasını yükle
+load_dotenv("password.env")
 
-# .env dosyasını yükle
-load_dotenv(dotenv_path="C:/Users/erena/Desktop/Raynet Projects/SaaS Prototype/raynet_saas_optimization/backend/password.env")
+# Database URL'yi password.env'den al
+DATABASE_URL = "postgresql://postgres:27101992@localhost/raynet_db"
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-print(f"DATABASE_URL: {DATABASE_URL}") 
+print(f"Using Database URL: {DATABASE_URL}")
 
-engine = create_engine(DATABASE_URL, echo=True)
+# Engine oluştur
+engine = create_engine(
+    DATABASE_URL,
+    echo=False,  # Production'da False olmalı
+    pool_size=20,
+    max_overflow=20,
+    pool_timeout=60,
+    pool_pre_ping=True,  # Bağlantı sağlığını kontrol et
+    pool_recycle=3600  # Eklendi
+)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
 Base = declarative_base()

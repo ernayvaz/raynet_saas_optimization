@@ -1,32 +1,39 @@
 // src/components/Layout.js
 
-import React from 'react';
-import Navbar from './Navbar';
-import Footer from './Footer';
+import React, { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
+import styled from 'styled-components';
+import LoadingSpinner from './LoadingSpinner';
+
+const Navbar = React.lazy(() => import('./Navbar'));
+const Footer = React.lazy(() => import('./Footer'));
+
+const Container = styled.div`
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+`;
+
+const Main = styled.main`
+    flex: 1;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+`;
 
 const Layout = () => {
     return (
-        <div style={styles.container}>
-            <Navbar />
-            <main style={styles.main}>
-                <Outlet />
-            </main>
-            <Footer />
-        </div>
+        <Container>
+            <Suspense fallback={<LoadingSpinner />}>
+                <Navbar />
+                <Main>
+                    <Outlet />
+                </Main>
+                <Footer />
+            </Suspense>
+        </Container>
     );
 };
 
-const styles = {
-    container: {
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: '100vh',
-    },
-    main: {
-        flex: 1,
-        padding: '20px',
-    },
-};
-
-export default Layout;
+export default React.memo(Layout);

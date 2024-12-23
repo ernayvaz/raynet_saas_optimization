@@ -1,37 +1,41 @@
 // src/pages/Dashboard.js
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Bar, Pie } from 'react-chartjs-2';
 import 'chart.js/auto';
 import './Dashboard.css';
 import { fetchUsers, fetchLicenses, fetchUsageStats, fetchOptimizations } from '../services/api';
 
 const Dashboard = () => {
-    const [users, setUsers] = useState([]);
-    const [licenses, setLicenses] = useState([]);
-    const [usageStats, setUsageStats] = useState([]);
-    const [optimizations, setOptimizations] = useState([]);
+    const [data, setData] = useState({
+        users: [],
+        licenses: [],
+        usageStats: [],
+        optimizations: []
+    });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [usersRes, licensesRes, usageStatsRes, optimizationsRes] = await Promise.all([
+                const [users, licenses, usageStats, optimizations] = await Promise.all([
                     fetchUsers(),
                     fetchLicenses(),
                     fetchUsageStats(),
                     fetchOptimizations()
                 ]);
 
-                setUsers(usersRes.data);
-                setLicenses(licensesRes.data);
-                setUsageStats(usageStatsRes.data);
-                setOptimizations(optimizationsRes.data);
-                setLoading(false);
+                setData({
+                    users: users.data,
+                    licenses: licenses.data,
+                    usageStats: usageStats.data,
+                    optimizations: optimizations.data
+                });
             } catch (err) {
-                console.error('Error fetching data:', err.response ? err.response.data : err.message);
-                setError('Veri çekme sırasında bir hata oluştu.');
+                setError('Veri yüklenirken bir hata oluştu.');
+                console.error(err);
+            } finally {
                 setLoading(false);
             }
         };
@@ -39,130 +43,104 @@ const Dashboard = () => {
         fetchData();
     }, []);
 
-    // Kullanım istatistikleri grafiği için veriler
-    const usageData = {
-        labels: usageStats.map(stat => new Date(stat.date).toLocaleDateString()),
-        datasets: [
-            {
-                label: 'Active Minutes',
-                data: usageStats.map(stat => stat.active_minutes),
-                backgroundColor: 'rgba(75,192,192,0.6)',
-            },
-        ],
-    };
-
-    // Lisans dağılımı grafiği için veriler
-    const licenseData = {
-        labels: licenses.map(license => license.license_name),
-        datasets: [
-            {
-                label: 'Licenses',
-                data: licenses.map(license => {
-                    // Kullanıcıların sahip olduğu her lisans için birim sayısını hesaplayın
-                    const count = usageStats.filter(stat => stat.license_id === license.license_id).length;
-                    return count;
-                }),
+    const chartData = useMemo(() => ({
+        usage: {
+            labels: data.usageStats.map(stat => new Date(stat.date).toLocaleDateString()),
+            datasets: [
+                {
+                    label: 'Aktif Kullanım (Dakika)',
+                    data: data.usageStats.map(stat => stat.active_minutes),
+                    backgroundColor: 'rgba(52, 152, 219, 0.6)',
+                    borderColor: 'rgba(52, 152, 219, 1)',
+                }
+            ]
+        },
+        license: {
+            labels: data.licenses.map(license => license.license_name),
+            datasets: [{
+                data: data.licenses.map(license => 
+                    data.usageStats.filter(stat => stat.license_id === license.license_id).length
+                ),
                 backgroundColor: [
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 206, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(153, 102, 255, 0.6)',
-                    'rgba(255, 159, 64, 0.6)',
-                ],
-            },
-        ],
-    };
+                    'rgba(52, 152, 219, 0.6)',
+                    'rgba(46, 204, 113, 0.6)',
+                    'rgba(155, 89, 182, 0.6)',
+                ]
+            }]
+        }
+    }), [data]);
 
-    // Yükleniyor durumunda gösterilecek bir spinner ekleyin
-    if (loading) {
-        return (
-            <div style={styles.loading}>
-                <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Yükleniyor...</span>
-                </div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return <div style={styles.error}>{error}</div>;
-    }
+    if (loading) return <div className="loading-container">Yükleniyor...</div>;
+    if (error) return <div className="error-container">{error}</div>;
 
     return (
-        <div style={styles.container}>
-            <h1>Dashboard</h1>
+        <div className="dashboard-container">
+            <h1 className="dashboard-header">Raynet SaaS Optimizasyon Paneli</h1>
             
-            <section style={styles.section}>
-                <h2>Usage Statistics</h2>
-                {usageStats.length > 0 ? <Bar data={usageData} /> : <p>Veri yok</p>}
-            </section>
-            
-            <section style={styles.section}>
-                <h2>Users</h2>
-                {users.length > 0 ? (
-                    <ul>
-                        {users.map(user => (
-                            <li key={user.user_id}>{user.email}</li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>Kullanıcı bulunamadı.</p>
-                )}
-            </section>
-            
-            <section style={styles.section}>
-                <h2>Licenses</h2>
-                {licenses.length > 0 ? (
-                    <ul>
-                        {licenses.map(license => (
-                            <li key={license.license_id}>{license.license_name}</li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>Lisans bulunamadı.</p>
-                )}
-            </section>
+            <div className="stats-grid">
+                <div className="stat-card">
+                    <div className="stat-title">Toplam Kullanıcı</div>
+                    <div className="stat-value">{data.users.length}</div>
+                </div>
+                <div className="stat-card">
+                    <div className="stat-title">Aktif Lisanslar</div>
+                    <div className="stat-value">{data.licenses.length}</div>
+                </div>
+                <div className="stat-card">
+                    <div className="stat-title">Optimizasyon Önerileri</div>
+                    <div className="stat-value">{data.optimizations.length}</div>
+                </div>
+            </div>
 
-            <section style={styles.section}>
-                <h2>License Distribution</h2>
-                {licenses.length > 0 ? <Pie data={licenseData} /> : <p>Lisans dağılımı için veri yok.</p>}
-            </section>
-            
-            <section style={styles.section}>
-                <h2>Optimizations</h2>
-                {optimizations.length > 0 ? (
-                    <ul>
-                        {optimizations.map(opt => (
-                            <li key={opt.user_id + opt.license_id}>{opt.recommendation_text}</li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>Optimizasyon önerisi yok.</p>
-                )}
-            </section>
+            <div className="chart-container">
+                <h2 className="chart-header">Kullanım Analizi</h2>
+                <Bar data={chartData.usage} options={chartOptions.bar} />
+            </div>
+
+            <div className="chart-container">
+                <h2 className="chart-header">Lisans Dağılımı</h2>
+                <Pie data={chartData.license} options={chartOptions.pie} />
+            </div>
+
+            <div className="chart-container">
+                <h2 className="chart-header">Optimizasyon Önerileri</h2>
+                <div className="recommendations-grid">
+                    {data.optimizations.map((opt, index) => (
+                        <div key={index} className="recommendation-card">
+                            {opt.recommendation_text}
+                        </div>
+                    ))}
+                </div>
+            </div>
         </div>
     );
 };
 
-const styles = {
-    container: {
-        padding: '20px',
+const chartOptions = {
+    bar: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
     },
-    section: {
-        marginBottom: '40px',
-    },
-    loading: {
-        textAlign: 'center',
-        marginTop: '50px',
-        fontSize: '24px',
-    },
-    error: {
-        textAlign: 'center',
-        marginTop: '50px',
-        fontSize: '24px',
-        color: 'red',
-    },
+    pie: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'right',
+            }
+        }
+    }
 };
 
-export default Dashboard;
+export default React.memo(Dashboard);

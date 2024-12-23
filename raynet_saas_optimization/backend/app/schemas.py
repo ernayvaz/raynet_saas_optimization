@@ -1,6 +1,6 @@
 # backend/app/schemas.py
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, validator
 from typing import Optional
 from datetime import datetime, date
 
@@ -13,9 +13,16 @@ class RawDataBase(BaseModel):
 
 class UserBase(BaseModel):
     user_id: str
-    email: str
+    email: EmailStr
     department: Optional[str] = None
     status: str
+
+    @validator('status')
+    def status_must_be_valid(cls, v):
+        valid_statuses = ['active', 'inactive', 'suspended']
+        if v.lower() not in valid_statuses:
+            raise ValueError('Invalid status')
+        return v.lower()
 
     class Config:
         orm_mode = True

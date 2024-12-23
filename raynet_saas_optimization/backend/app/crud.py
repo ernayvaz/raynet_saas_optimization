@@ -3,11 +3,14 @@
 from sqlalchemy.orm import Session
 from .models import User, License, UserLicense, UsageStats, Optimization
 from .schemas import UserCreate, LicenseCreate, UserLicenseCreate, UsageStatsCreate, OptimizationCreate
+from fastapi_cache import FastAPICache
+from fastapi_cache.decorator import cache
 
 # Kullanıcı CRUD İşlemleri
 def get_user(db: Session, user_id: str):
     return db.query(User).filter(User.user_id == user_id).first()
 
+@cache(expire=60)
 def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(User).offset(skip).limit(limit).all()
 

@@ -1,4 +1,5 @@
 import requests
+import os
 
 # Azure Portal'dan aldığınız bilgileri buraya girin
 tenant_id = '59c751df-af72-49a0-a37e-10a6c7aefd22'
@@ -23,10 +24,19 @@ if response.status_code == 200:
     token = response.json().get('access_token')
     print(f'Access Token: {token}')
 
-    # Token'ı bir text dosyasına kaydet
-    with open('.env', 'w') as file:
-        file.write(f'ACCESS_TOKEN={token}\n')
-        file.write(f'POSTGRES_PASSWORD={"27101992"}\n')
+    # .env dosyasının içeriğini oku
+    env_path = r"C:\Users\erena\Desktop\Raynet Projects\SaaS_Prototype\.env"
+    with open(env_path, 'r') as file:
+        lines = file.readlines()
+
+    # ACCESS_TOKEN satırını güncelle
+    for i, line in enumerate(lines):
+        if line.startswith('ACCESS_TOKEN='):
+            lines[i] = f'ACCESS_TOKEN={token}\n'
+
+    # Güncellenmiş içeriği dosyaya yaz
+    with open(env_path, 'w') as file:
+        file.writelines(lines)
 else:
     print('Error obtaining access token')
     print(response.text)
