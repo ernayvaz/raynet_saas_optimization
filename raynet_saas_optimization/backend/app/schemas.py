@@ -1,7 +1,7 @@
 # backend/app/schemas.py
 
 from pydantic import BaseModel, EmailStr, validator
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime, date
 
 class RawDataBase(BaseModel):
@@ -13,8 +13,8 @@ class RawDataBase(BaseModel):
 
 class UserBase(BaseModel):
     user_id: str
-    email: EmailStr
-    department: Optional[str] = None
+    email: str
+    department: str
     status: str
 
     @validator('status')

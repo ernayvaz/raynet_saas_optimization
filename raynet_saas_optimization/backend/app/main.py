@@ -9,7 +9,8 @@ import os
 from dotenv import load_dotenv
 from fastapi_limiter import FastAPILimiter
 import redis.asyncio as redis
-import aioredis
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
 
 # Logging ayarları
 logging.basicConfig(level=logging.INFO)
@@ -37,7 +38,6 @@ async def global_exception_handler(request, exc):
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    #allow_origins=["http://localhost:3000"],  # React uygulaması URL'sini ekleyin
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -51,19 +51,23 @@ app.include_router(router, prefix="/api")
 def read_root():
     return {"message": "Hello, FastAPI is running successfully!"}
 
-# Uygulama başladığında analizi çalıştır
+# Uygulama başladığında analizi çalıştır ve cache'i başlat
 @app.on_event("startup")
 async def startup_event():
     background_tasks = BackgroundTasks()
     background_tasks.add_task(analyze_data, SessionLocal())
-    redis = await aioredis.create_redis_pool('redis://localhost')
-    await FastAPILimiter.init(redis)
+    
+    redis_client = redis.from_url("redis://localhost", encoding="utf8", decode_responses=True)
+    
+    # FastAPICache'i Redis backend ile başlat
+    FastAPICache.init(RedisBackend(redis_client), prefix="fastapi-cache")
 
+    # Rate Limiting için FastAPILimiter başlat
+    await FastAPILimiter.init(redis_client)
 # Ana uygulamada da .env dosyasını yükleyin
 load_dotenv()
 
 # Environment değişkenlerini kontrol edin
 print("Environment variables:")
 print(f"DATABASE_URL: {os.getenv('DATABASE_URL')}")
-#print(f"DB_USER: {os.getenv('DB_USER')}")
-#print(f"DB_HOST: {os.getenv('DB_HOST')}")
+

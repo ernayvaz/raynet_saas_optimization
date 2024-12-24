@@ -53,6 +53,9 @@ const Navbar = () => {
     return (
         <Nav>
             <h1>Raynet SaaS</h1>
+            <button onClick={toggleMenu} className="hamburger-menu">
+                <span>☰</span>
+            </button>
             <NavLinks isOpen={isOpen}>
                 <StyledNavLink to="/" end>
                     Dashboard

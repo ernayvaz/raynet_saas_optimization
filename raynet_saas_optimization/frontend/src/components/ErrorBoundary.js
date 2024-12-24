@@ -1,8 +1,10 @@
 // src/components/ErrorBoundary.js
 
 import React from 'react';
-import { withRouter } from 'react-router-dom';
 import * as Sentry from "@sentry/react";
+import ReactGA from 'react-ga';
+
+ReactGA.initialize('UA-XXXXXXXXX-X');
 
 class ErrorBoundary extends React.Component {
     state = { 
@@ -28,9 +30,11 @@ class ErrorBoundary extends React.Component {
         // Analytics
         if (process.env.NODE_ENV === 'production') {
             // Google Analytics veya benzeri
-            analytics.track('Error Occurred', {
-                error: error.toString(),
-                componentStack: errorInfo.componentStack
+            ReactGA.event({
+                category: 'Error',
+                action: 'Error Occurred',
+                label: error.toString(),
+                value: errorInfo.componentStack
             });
         }
     }
