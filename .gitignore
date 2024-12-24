@@ -23,9 +23,16 @@ dist/
 *.db
 
 # Environment Files
-.env
-raynet_saas_optimization/frontend/.env
-raynet_saas_optimization/backend/.env
-raynet_saas_optimization/backend/password.env
-*/**/.env
-*.env
+# Root directory env files
+/.env
+/password.env
+/secrets.env
+
+# Project specific env files
+/raynet_saas_optimization/frontend/.env
+/raynet_saas_optimization/backend/.env
+/raynet_saas_optimization/backend/password.env
+
+# All env files in any directory
+**/.env
+**/*.env
