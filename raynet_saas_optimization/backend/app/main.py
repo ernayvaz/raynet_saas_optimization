@@ -16,7 +16,7 @@ from fastapi_cache.backends.redis import RedisBackend
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Veritabanı tablolarını oluştur
+# Create database tables
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -29,7 +29,7 @@ origins = [
     "http://127.0.0.1:3000",
 ]
 
-# Hata yönetimi ekleyin
+# Add error handling
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc):
     logger.error(f"An error occurred: {exc}")
@@ -51,7 +51,7 @@ app.include_router(router, prefix="/api")
 def read_root():
     return {"message": "Hello, FastAPI is running successfully!"}
 
-# Uygulama başladığında analizi çalıştır ve cache'i başlat
+# Run analysis and initialize cache when application starts
 @app.on_event("startup")
 async def startup_event():
     background_tasks = BackgroundTasks()

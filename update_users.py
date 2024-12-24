@@ -112,16 +112,16 @@ for user in users:
             user['department'],
             user['status']
         ))
-        logging.info(f"User eklendi veya güncellendi: {user['user_id']}")
+        logging.info(f"User added or updated: {user['user_id']}")
     except Exception as e:
-        logging.error(f"User eklenirken/güncellenirken hata oluştu: {user['user_id']}. Hata: {e}")
+        logging.error(f"Error occurred while adding/updating user: {user['user_id']}. Error: {e}")
 
 # Değişiklikleri kaydetme ve bağlantıyı kapatma
 try:
     conn.commit()
-    logging.info("Tüm kullanıcılar başarıyla veritabanına kaydedildi.")
+    logging.info("All users successfully saved to database.")
 except Exception as e:
-    logging.error(f"Değişiklikler kaydedilirken hata oluştu: {e}")
+    logging.error(f"Error occurred while saving changes: {e}")
 finally:
     cursor.close()
     conn.close()

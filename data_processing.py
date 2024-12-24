@@ -4,32 +4,32 @@ from sqlalchemy import create_engine
 import json
 import os
 
-# Veritabanı bağlantı bilgileri
-DB_USERNAME = 'postgres'  # PostgreSQL kullanıcı adınız
-DB_PASSWORD = '27101992'  # PostgreSQL şifreniz
-DB_HOST = 'localhost'  # Veritabanı sunucusu (genellikle localhost)
-DB_PORT = '5432'  # PostgreSQL varsayılan portu
-DB_NAME = 'raynet_prototip'  # Oluşturduğunuz veritabanı adı
+# Database connection information
+DB_USERNAME = 'postgres'  # Your PostgreSQL username
+DB_PASSWORD = '27101992'  # PostgreSQL password
+DB_HOST = 'localhost'  # Database server (usually localhost)
+DB_PORT = '5432'  # PostgreSQL default port
+DB_NAME = 'raynet_prototip'  # Your database name
 
-# PostgreSQL bağlantı stringi
+# PostgreSQL connection string
 DATABASE_URL = f'postgresql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
-# SQLAlchemy ile veritabanına bağlanma
+# SQLAlchemy to connect to database
 engine = create_engine(DATABASE_URL)
 
-# raw_data tablosundaki veriyi okuma
+# Read data from raw_data table
 def get_raw_data():
     query = 'SELECT * FROM raw_data ORDER BY fetched_at DESC LIMIT 1;'
     df = pd.read_sql(query, engine)
     if df.empty:
-        print("raw_data tablosunda veri yok.")
+        print("No data in raw_data table.")
         return None
     return df.iloc[0]['raw_json']
 
-# Veriyi işleyip normalized tablolara ekleme
+# Process data and add to normalized tables
 def process_data(raw_json):
     data = json.loads(raw_json)
     
-    # Kullanıcıları ekleme
+    # Add users
     users = []
     for user in data.get('users', []):
         users.append({
@@ -41,23 +41,23 @@ def process_data(raw_json):
     if users:
         users_df = pd.DataFrame(users)
         users_df.to_sql('users', engine, if_exists='append', index=False)
-        print(f"{len(users_df)} kullanıcı eklendi.")
+        print(f"{len(users_df)} users added.")
 
-    # Lisansları ekleme
+    # Add licenses
     licenses = []
     for sku in data.get('subscribedSkus', []):
         licenses.append({
             'license_id': sku['skuId'],
             'license_name': sku['skuPartNumber'],
-            'cost_per_user': sku['prepaidUnits']['enabled'],  # Burada doğru alanı kullandığınızdan emin olun
-            'vendor_support_ends_at': None  # Opsiyonel, ihtiyaç varsa ekleyin
+            'cost_per_user': sku['prepaidUnits']['enabled'],  # Make sure you're using the correct field here
+            'vendor_support_ends_at': None  # Optional, add if needed
         })
     if licenses:
         licenses_df = pd.DataFrame(licenses).drop_duplicates(subset=['license_id'])
         licenses_df.to_sql('licenses', engine, if_exists='append', index=False)
-        print(f"{len(licenses_df)} lisans eklendi.")
+        print(f"{len(licenses_df)} licenses added.")
 
-    # Kullanıcı Lisans ilişkilerini ekleme
+    # Add user-license relationships
     user_licenses = []
     for user_license in data.get('userLicenses', []):
         user_licenses.append({
@@ -69,11 +69,11 @@ def process_data(raw_json):
     if user_licenses:
         user_licenses_df = pd.DataFrame(user_licenses)
         user_licenses_df.to_sql('user_licenses', engine, if_exists='append', index=False)
-        print(f"{len(user_licenses_df)} kullanıcı-lisans ilişkisi eklendi.")
+        print(f"{len(user_licenses_df)} user-license relationships added.")
 
-    # Kullanım istatistiklerini ekleme
+    # Add usage statistics
     usage_stats = []
-    for report in data.get('usageStats', []):  # 'usageStats' alanının doğru olduğundan emin olun
+    for report in data.get('usageStats', []):  # Make sure the 'usageStats' field is correct
         usage_stats.append({
             'user_id': report['userId'],
             'license_id': report['licenseId'],
@@ -84,11 +84,11 @@ def process_data(raw_json):
     if usage_stats:
         usage_stats_df = pd.DataFrame(usage_stats)
         usage_stats_df.to_sql('usage_stats', engine, if_exists='append', index=False)
-        print(f"{len(usage_stats_df)} kullanım istatistiği eklendi.")
+        print(f"{len(usage_stats_df)} usage statistics added.")
 
-    # Optimizasyon önerilerini ekleme (Opsiyonel)
+    # Add optimization recommendations (Optional)
     optimizations = []
-    for opt in data.get('optimizations', []):  # 'optimizations' alanının doğru olduğundan emin olun
+    for opt in data.get('optimizations', []):  # Make sure the 'optimizations' field is correct
         optimizations.append({
             'user_id': opt.get('userId'),
             'license_id': opt.get('licenseId'),
@@ -98,7 +98,7 @@ def process_data(raw_json):
     if optimizations:
         optimizations_df = pd.DataFrame(optimizations)
         optimizations_df.to_sql('optimizations', engine, if_exists='append', index=False)
-        print(f"{len(optimizations_df)} optimizasyon önerisi eklendi.")
+        print(f"{len(optimizations_df)} optimization recommendations added.")
 
 def main():
     raw_json = get_raw_data()

@@ -47,7 +47,7 @@ class ErrorBoundary extends React.Component {
         if (this.state.hasError) {
             return (
                 <div className="error-container">
-                    <h1>Beklenmeyen bir hata oluştu</h1>
+                    <h1>An unexpected error occurred</h1>
                     <button onClick={this.handleReload}>
                         Sayfayı Yenile
                     </button>

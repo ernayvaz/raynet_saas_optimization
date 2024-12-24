@@ -12,7 +12,7 @@ router = APIRouter()
 def read_api_root():
     return {"message": "Raynet SaaS Optimization API"}
 
-# Veritabanı oturumu almak için bağımlılık
+# Get database session dependency
 def get_db():
     db = SessionLocal()
     try:

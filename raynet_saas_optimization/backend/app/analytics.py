@@ -6,15 +6,15 @@ from datetime import datetime, timedelta
 def analyze_data(db: Session):
     print("Starting data analysis...")
     
-    # Şu anki tarih
+    # Current date
     current_date = datetime.now().date()
     print(f"Current date: {current_date}")
     
-    # 30 günden fazla aktif olmayan kullanıcıları bulma
+    # Find users who have not been active for more than 30 days
     threshold_date = current_date - timedelta(days=30)
     print(f"Threshold date: {threshold_date}")
     
-    # Aliased tablolar kullanarak JOIN işlemlerini daha belirgin hale getirme
+    # Aliased tables to make JOIN operations clearer
     ul = aliased(UserLicense)
     l = aliased(License)
     
@@ -36,7 +36,7 @@ def analyze_data(db: Session):
         print(f"Error during query: {e}")
         raise
     
-    # Unique (user_id, license_id) çiftlerini saklamak için set
+    # Set to store unique (user_id, license_id) pairs
     processed_pairs = set()
     
     for user, user_license, license in inactive_users:
@@ -46,7 +46,7 @@ def analyze_data(db: Session):
             print(f"Already processed optimization for user: {user.email}, license: {license.license_name}")
             continue
         
-        # Optimizasyonun zaten mevcut olup olmadığını kontrol et
+        # Check if optimization already exists
         existing_optimization = db.query(Optimization).filter(
             Optimization.user_id == user.user_id,
             Optimization.license_id == license.license_id
@@ -55,13 +55,13 @@ def analyze_data(db: Session):
         if existing_optimization:
             print(f"Optimization already exists for user: {user.email}, license: {license.license_name}")
             processed_pairs.add(pair)
-            continue  # Mevcut optimizasyon varsa eklemeyi atla
+            continue  # Skip if optimization already exists
         
-        # Optimizasyon önerisi oluşturma
+        # Create optimization recommendation
         recommendation_text = f"User {user.email} has not been active for over 30 days. Consider downgrading their {license.license_name} license to reduce costs."
         print(f"Creating optimization for user: {user.email}, license: {license.license_name}")
         
-        # Optimizasyon önerisini veritabanına ekleme
+        # Add optimization recommendation to database
         optimization = Optimization(
             user_id=user.user_id,
             license_id=license.license_id,

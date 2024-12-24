@@ -74,9 +74,9 @@ query = """
 try:
     cursor.execute(query)
     data = cursor.fetchall()
-    logging.info("Kullanım verileri başarıyla çekildi.")
+    logging.info("Usage data successfully retrieved.")
 except Exception as e:
-    logging.error(f"Kullanım verileri çekilirken hata oluştu: {e}")
+    logging.error(f"Error occurred while retrieving usage data: {e}")
     cursor.close()
     conn.close()
     exit(1)
@@ -108,7 +108,7 @@ for (user_id, license_id), group in user_license_groups:
     
     # Veri yeterliliği kontrolü
     if len(usage_df) < 30:
-        logging.info(f"Yeterli veri yok: Kullanıcı ID: {user_id}, Lisans: {license_id}. Tahmin atlanıyor.")
+        logging.info(f"Insufficient data: User ID: {user_id}, License: {license_id}. Skipping prediction.")
         continue
     
     # Eksik tarihler olup olmadığını kontrol edin ve doldurun
@@ -159,12 +159,12 @@ for (user_id, license_id), group in user_license_groups:
     
     try:
         model.fit(X_train_scaled, y_train)
-        logging.info(f"XGBoost modeli eğitildi: Kullanıcı ID: {user_id}, Lisans: {license_id}")
+        logging.info(f"XGBoost model trained: User ID: {user_id}, License: {license_id}")
         
         # Model performansını değerlendirme
         y_pred = model.predict(X_val_scaled)
         mae = mean_absolute_error(y_val, y_pred)
-        logging.info(f"Model MAE: {mae:.2f} - Kullanıcı ID: {user_id}, Lisans: {license_id}")
+        logging.info(f"Model MAE: {mae:.2f} - User ID: {user_id}, License: {license_id}")
         
         # Gelecek 30 gün için tahmin yapma
         future_predictions = []
@@ -221,17 +221,17 @@ for (user_id, license_id), group in user_license_groups:
                 VALUES (%s, %s, %s, %s, %s)
                 ON CONFLICT (user_id, license_id, predicted_date) DO NOTHING
             """, records)
-            logging.info(f"Predictions saved: Kullanıcı ID: {user_id}, Lisans: {license_id}")
+            logging.info(f"Predictions saved: User ID: {user_id}, License: {license_id}")
     
     except Exception as e:
-        logging.error(f"XGBoost modeli çalıştırılırken hata oluştu: Kullanıcı ID: {user_id}, Lisans: {license_id}. Hata: {e}")
+        logging.error(f"Error occurred while running XGBoost model: User ID: {user_id}, License: {license_id}. Error: {e}")
 
 # Değişiklikleri kaydetme ve bağlantıyı kapatma
 try:
     conn.commit()
-    logging.info("Tüm tahminler başarıyla veritabanına kaydedildi.")
+    logging.info("All predictions successfully saved to database.")
 except Exception as e:
-    logging.error(f"Veritabanına kaydetme sırasında hata oluştu: {e}")
+    logging.error(f"Error occurred while saving to database: {e}")
 finally:
     cursor.close()
     conn.close()

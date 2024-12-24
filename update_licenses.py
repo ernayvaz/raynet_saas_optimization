@@ -116,7 +116,7 @@ for vendor in vendors:
         """, (vendor,))
         logging.info(f"Vendor eklendi veya zaten mevcut: {vendor}")
     except Exception as e:
-        logging.error(f"Vendor eklenirken hata oluştu: {vendor}. Hata: {e}")
+        logging.error(f"Error occurred while adding vendor: {vendor}. Error: {e}")
 
 # Licenses tablosunu güncelleme
 for license in licenses:
@@ -144,16 +144,16 @@ for license in licenses:
             license['vendor_support_ends_at'],
             vendor_id
         ))
-        logging.info(f"License eklendi veya güncellendi: {license['license_id']}")
+        logging.info(f"License added or updated: {license['license_id']}")
     except Exception as e:
-        logging.error(f"License eklenirken/güncellenirken hata oluştu: {license['license_id']}. Hata: {e}")
+        logging.error(f"Error occurred while adding/updating license: {license['license_id']}. Error: {e}")
 
 # Değişiklikleri kaydetme ve bağlantıyı kapatma
 try:
     conn.commit()
-    logging.info("Tüm lisanslar başarıyla veritabanına kaydedildi.")
+    logging.info("All licenses successfully saved to database.")
 except Exception as e:
-    logging.error(f"Değişiklikler kaydedilirken hata oluştu: {e}")
+    logging.error(f"Error occurred while saving changes: {e}")
 finally:
     cursor.close()
     conn.close()

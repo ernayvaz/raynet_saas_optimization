@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoadingSpinner from './components/LoadingSpinner';
 import ErrorBoundary from './components/ErrorBoundary';
 
-// Lazy loading ile komponentlerin yüklenmesi
+// Load components with lazy loading for better performance
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Layout = lazy(() => import('./components/Layout'));
 

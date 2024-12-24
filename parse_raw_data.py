@@ -36,18 +36,18 @@ try:
         password=os.getenv("POSTGRES_PASSWORD")  # Çevresel değişken olarak kullanılır
     )
     cursor = conn.cursor()
-    logging.info("PostgreSQL bağlantısı başarılı.")
+    logging.info("PostgreSQL connection successful.")
 except Exception as e:
-    logging.error(f"PostgreSQL bağlantısı kurulamadı: {e}")
+    logging.error(f"PostgreSQL connection failed: {e}")
     exit(1)
 
 # raw_data tablosundaki tüm kayıtları çekme
 try:
     cursor.execute("SELECT id, fetched_at, raw_json FROM raw_data")
     data = cursor.fetchall()
-    logging.info("raw_data tablosundan veriler başarıyla çekildi.")
+    logging.info("Data successfully retrieved from raw_data table.")
 except Exception as e:
-    logging.error(f"raw_data tablosundan veriler çekilirken hata oluştu: {e}")
+    logging.error(f"Error occurred while retrieving data from raw_data table: {e}")
     cursor.close()
     conn.close()
     exit(1)
@@ -148,15 +148,15 @@ for index, row in df_structured.iterrows():
             row['skype_for_business_license_assign_date']
         ))
     except Exception as e:
-        logging.error(f"Veri eklenirken hata oluştu: {e}")
+        logging.error(f"Error occurred while inserting data: {e}")
 
 # Değişiklikleri kaydetme ve bağlantıyı kapatma
 try:
     conn.commit()
-    logging.info("Tüm veriler başarıyla structured_data tablosuna eklendi.")
+    logging.info("All data successfully inserted into structured_data table.")
 except Exception as e:
-    logging.error(f"Veritabanına kaydetme sırasında hata oluştu: {e}")
+    logging.error(f"Error occurred while committing changes: {e}")
 finally:
     cursor.close()
     conn.close()
-    logging.info("PostgreSQL bağlantısı kapatıldı.")
+    logging.info("PostgreSQL connection closed.")

@@ -5,22 +5,22 @@ import os
 
 load_dotenv()
 
-# PostgreSQL bağlantı bilgileri
+# PostgreSQL connection details
 conn = psycopg2.connect(
     host="localhost",
     dbname="raynet_db",
     user="postgres",
-    password=os.getenv("POSTGRES_PASSWORD")  # Çevresel değişken olarak kullanılır
+    password=os.getenv("POSTGRES_PASSWORD")  # Used as environment variable
 )
 cursor = conn.cursor()
 
-# Şu anki tarih
+# Current date
 current_date = datetime.now().date()
 
-# 30 günden fazla etkin olmayan kullanıcıları bulma
+# Find users inactive for more than 30 days
 threshold_date = current_date - timedelta(days=30)
 
-# Eşik değerler
+# Threshold values
 ACTIVE_MINUTES_THRESHOLD = 100
 LOGIN_COUNT_THRESHOLD = 3
 
@@ -38,7 +38,7 @@ for user in inactive_users:
     user_id, email, license_id, license_name = user
     print(f"User: {email}, License: {license_name}, Last Active: {license_id}")
 
-    # Optimizasyon önerisinin zaten var olup olmadığını kontrol etme
+    # Check if optimization recommendation already exists
     cursor.execute("""
         SELECT COUNT(*) FROM optimizations
         WHERE user_id = %s AND license_id = %s
@@ -46,9 +46,7 @@ for user in inactive_users:
     count = cursor.fetchone()[0]
 
     if count == 0:
-        # Maliyet optimizasyon önerisi oluşturma
-        # Örneğin: Daha düşük maliyetli bir lisansa geçiş önerisi
-        # Bu örnekte sabit bir öneri metni kullanıyoruz
+        # Create cost optimization recommendation
         recommendation_text = f"User {email} has not been active for over 30 days. Consider downgrading their {license_name} license to reduce costs."
 
         cursor.execute("""
@@ -59,7 +57,7 @@ for user in inactive_users:
     else:
         print(f"Optimization already exists for User: {email}, License: {license_name}")
 
-# Düşük kullanım oranına sahip kullanıcılar için optimizasyon önerileri
+# Optimization recommendations for users with low usage rates
 cursor.execute("""
     SELECT u.user_id, u.email, ul.license_id, l.license_name
     FROM users u
@@ -76,7 +74,7 @@ for user in low_usage_users:
     user_id, email, license_id, license_name = user
     print(f"Low Usage User: {email}, License: {license_name}")
 
-    # Optimizasyon önerisinin zaten var olup olmadığını kontrol etme
+    # Check if optimization recommendation already exists
     cursor.execute("""
         SELECT COUNT(*) FROM optimizations
         WHERE user_id = %s AND license_id = %s
@@ -84,7 +82,7 @@ for user in low_usage_users:
     count = cursor.fetchone()[0]
 
     if count == 0:
-        # Maliyet optimizasyon önerisi oluşturma
+        # Create cost optimization recommendation
         recommendation_text = f"User {email} has low usage of their {license_name} license. Consider downgrading or reallocating their license to optimize costs."
 
         cursor.execute("""

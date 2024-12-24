@@ -42,8 +42,8 @@ class UsageStats(Base):
     user_id = Column(String, ForeignKey("users.user_id"), primary_key=True)
     license_id = Column(String, ForeignKey("licenses.license_id"), primary_key=True)
     date = Column(Date, primary_key=True)
-    active_minutes = Column(Integer, nullable=False)  # Numeric yerine Integer kullanıldı
-    login_count = Column(Integer, nullable=False)     # Numeric yerine Integer kullanıldı
+    active_minutes = Column(Integer, nullable=False)  # Integer used instead of Numeric
+    login_count = Column(Integer, nullable=False)     # Integer used instead of Numeric
     user = relationship("User")
     license = relationship("License")
 
