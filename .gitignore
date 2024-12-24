@@ -22,17 +22,21 @@ dist/
 # PostgreSQL
 *.db
 
-# Environment Files
-# Root directory env files
-/.env
-/password.env
-/secrets.env
+# Environment Files - Strict Rules
+# Ignore all .env files everywhere except alembic/env.py
+.env
+*.env
+.env.*
+*.env.*
+**/.env
+**/*.env
+**/.env.*
+**/*.env.*
+!**/alembic/env.py
 
-# Project specific env files
+# Specific env files to ignore
 /raynet_saas_optimization/frontend/.env
 /raynet_saas_optimization/backend/.env
 /raynet_saas_optimization/backend/password.env
-
-# All env files in any directory
-**/.env
-**/*.env
+/password.env
+/secrets.env
