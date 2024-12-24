@@ -1,61 +1,69 @@
-# Raynet SaaS Optimization
+# Raynet SaaS Optimization Dashboard
 
-This project is a SaaS management tool that can be integrated with the Raynet platform, analyzing Microsoft 365 data and providing license optimization recommendations.
+Bu dashboard, SaaS lisans optimizasyonunu görselleştirmek ve yönetmek için tasarlanmış bir araçtır.
 
-## Features
+## Gereksinimler
 
-- **Data Integration:** Fetch user, license, and usage data through Microsoft 365 API.
-- **Database Management:** Store data using PostgreSQL.
-- **Analytics:** Detect unused licenses and generate cost optimization recommendations.
-- **Web Dashboard:** Visually present data using React.
+Uygulamayı çalıştırmak için aşağıdaki yazılımların yüklü olması gerekmektedir:
 
-## Installation
+1. Python 3.8 veya üzeri
+2. Node.js 14 veya üzeri
+3. PostgreSQL 13 veya üzeri
 
-### Requirements
+## Hızlı Başlangıç
 
-- Python 3.11
-- Node.js and npm
-- Git
-- PostgreSQL
-- Docker (Optional)
+1. PostgreSQL servisinin çalıştığından emin olun
+2. `start_dashboard.bat` dosyasına çift tıklayın
+3. Tarayıcınızda otomatik olarak dashboard açılacaktır
+4. İşiniz bittiğinde, açılan komut penceresinde herhangi bir tuşa basarak tüm servisleri kapatabilirsiniz
 
-### Steps
+## Manuel Kurulum
 
-1. **Clone the Repository:**
-    ```bash
-    git clone https://github.com/YOUR_USERNAME/raynet_saas_optimization.git
-    cd raynet_saas_optimization
-    ```
+Eğer otomatik başlatma script'i çalışmazsa, aşağıdaki adımları takip edebilirsiniz:
 
-2. **Backend Setup:**
-    ```bash
-    cd backend
-    python -m venv venv
-    source venv/bin/activate  # For Windows: venv\Scripts\activate
-    pip install -r requirements.txt
-    ```
+### Backend Kurulumu
 
-3. **Frontend Setup:**
-    ```bash
-    cd ../frontend
-    npm install
-    ```
+```bash
+cd raynet_saas_optimization/backend
+pip install -r requirements.txt
+python -m uvicorn app.main:app --reload
+```
 
-4. **Run Using Docker:**
-    ```bash
-    cd ..
-    docker-compose up --build
-    ```
+### Frontend Kurulumu
 
-## Usage
+```bash
+cd raynet_saas_optimization/frontend
+npm install
+npm start
+```
 
-- **Backend:** You can view the API documentation at `http://localhost:8000/docs`
-- **Frontend:** You can view the dashboard at `http://localhost:3000`
+## Veritabanı Yapılandırması
 
-## Contributing
+PostgreSQL veritabanı bağlantı bilgilerinizi `.env` dosyasında güncelleyin:
 
-If you would like to contribute, please create a pull request or open an issue directly.
+```env
+DB_USERNAME=postgres
+DB_PASSWORD=your_password
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=raynet_db
+```
 
-## License
+## Sorun Giderme
 
-[MIT](LICENSE)
+1. "Port already in use" hatası alırsanız:
+   - Backend için: `netstat -ano | findstr :8000`
+   - Frontend için: `netstat -ano | findstr :3000`
+   - Bulunan PID'yi kullanarak: `taskkill /PID <pid_number> /F`
+
+2. PostgreSQL bağlantı hatası alırsanız:
+   - PostgreSQL servisinin çalıştığından emin olun
+   - Veritabanı bağlantı bilgilerinin doğru olduğunu kontrol edin
+
+3. Paket yükleme hataları için:
+   - Backend: `pip install -r requirements.txt`
+   - Frontend: `npm install`
+
+## Lisans
+
+Bu proje MIT lisansı altında lisanslanmıştır.
