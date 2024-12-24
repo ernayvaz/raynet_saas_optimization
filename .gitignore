@@ -22,5 +22,10 @@ dist/
 # PostgreSQL
 *.db
 
-# Keep all environment files
-# .env files are now tracked
+# Environment Files
+.env
+raynet_saas_optimization/frontend/.env
+raynet_saas_optimization/backend/.env
+raynet_saas_optimization/backend/password.env
+*/**/.env
+*.env
