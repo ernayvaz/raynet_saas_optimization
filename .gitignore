@@ -10,7 +10,6 @@ ENV/
 env.bak/
 venv.bak/
 *.dll
-.env
 
 # Node.js
 node_modules/
@@ -22,3 +21,6 @@ dist/
 
 # PostgreSQL
 *.db
+
+# Keep all environment files
+# .env files are now tracked
