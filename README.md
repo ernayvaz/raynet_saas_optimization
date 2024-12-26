@@ -1,69 +1,79 @@
-# Raynet SaaS Optimization Dashboard
+# 🚀 Raynet SaaS Analytics Projects
 
-Bu dashboard, SaaS lisans optimizasyonunu görselleştirmek ve yönetmek için tasarlanmış bir araçtır.
+This repository contains a collection of SaaS analytics and optimization projects developed by Raynet.
 
-## Gereksinimler
+## 📂 Projects
 
-Uygulamayı çalıştırmak için aşağıdaki yazılımların yüklü olması gerekmektedir:
+### [Cloud-SaaS Analytics & Integration Platform](/raynet_saas_optimization)
 
-1. Python 3.8 veya üzeri
-2. Node.js 14 veya üzeri
-3. PostgreSQL 13 veya üzeri
+A comprehensive management and analytics solution designed to optimize Microsoft Teams license usage and reduce costs. The platform offers real-time user activity monitoring, license usage analysis, and cost optimization recommendations.
 
-## Hızlı Başlangıç
+#### Key Features
+- 📊 Real-time analytics dashboard
+- 👥 Advanced user management
+- 💳 Multi-tier license optimization
+- 📈 Performance metrics and reporting
+- 🔒 Secure authentication and access control
 
-1. PostgreSQL servisinin çalıştığından emin olun
-2. `start_dashboard.bat` dosyasına çift tıklayın
-3. Tarayıcınızda otomatik olarak dashboard açılacaktır
-4. İşiniz bittiğinde, açılan komut penceresinde herhangi bir tuşa basarak tüm servisleri kapatabilirsiniz
+[View Project Details →](/raynet_saas_optimization)
 
-## Manuel Kurulum
+## 🛠️ Development Environment
 
-Eğer otomatik başlatma script'i çalışmazsa, aşağıdaki adımları takip edebilirsiniz:
+### Prerequisites
+- Docker and Docker Compose
+- Node.js (v14 or higher)
+- Python 3.8+
+- PostgreSQL 13+
+- Git
 
-### Backend Kurulumu
-
+### Quick Start
+1. Clone the repository:
 ```bash
-cd raynet_saas_optimization/backend
-pip install -r requirements.txt
-python -m uvicorn app.main:app --reload
+git clone https://github.com/ernayvaz/raynet_saas_optimization.git
+cd raynet_saas_optimization
 ```
 
-### Frontend Kurulumu
+2. Choose your installation method:
+   - [Automatic Installation Guide](/raynet_saas_optimization#automatic-installation)
+   - [Manual Installation Guide](/raynet_saas_optimization#manual-installation)
+   - [Docker Installation Guide](/raynet_saas_optimization#docker-installation)
 
-```bash
-cd raynet_saas_optimization/frontend
-npm install
-npm start
-```
+## 📚 Documentation
 
-## Veritabanı Yapılandırması
+- [Project Documentation](/raynet_saas_optimization)
+- [API Documentation](http://localhost:8000/docs) (available after starting the server)
+- [Wiki](https://github.com/ernayvaz/raynet_saas_optimization/wiki)
 
-PostgreSQL veritabanı bağlantı bilgilerinizi `.env` dosyasında güncelleyin:
+## 🤝 Contributing
 
-```env
-DB_USERNAME=postgres
-DB_PASSWORD=your_password
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=raynet_db
-```
+We welcome contributions! Please see our [Contributing Guidelines](/raynet_saas_optimization#contributing) for details.
 
-## Sorun Giderme
+## 📝 License
 
-1. "Port already in use" hatası alırsanız:
-   - Backend için: `netstat -ano | findstr :8000`
-   - Frontend için: `netstat -ano | findstr :3000`
-   - Bulunan PID'yi kullanarak: `taskkill /PID <pid_number> /F`
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-2. PostgreSQL bağlantı hatası alırsanız:
-   - PostgreSQL servisinin çalıştığından emin olun
-   - Veritabanı bağlantı bilgilerinin doğru olduğunu kontrol edin
+## 👥 Team
 
-3. Paket yükleme hataları için:
-   - Backend: `pip install -r requirements.txt`
-   - Frontend: `npm install`
+- **Eren Ayvaz** - *Lead Developer & Project Manager*
+  - [GitHub](https://github.com/ernayvaz)
+  - [LinkedIn](https://linkedin.com/in/erenayvaz)
 
-## Lisans
+## 📞 Support & Contact
 
-Bu proje MIT lisansı altında lisanslanmıştır.
+- Technical Support: support@raynet.com
+- Business Inquiries: contact@raynet.com
+- [Create Issue](https://github.com/ernayvaz/raynet_saas_optimization/issues)
+
+## 🌟 Acknowledgments
+
+Special thanks to:
+- Microsoft Teams API Documentation
+- React.js Community
+- FastAPI Framework
+- Docker Community
+
+---
+
+<div align="center">
+  <sub>Built with ❤️ by Raynet | © 2024 Raynet. All rights reserved.</sub>
+</div>
