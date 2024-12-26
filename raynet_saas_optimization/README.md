@@ -1,173 +1,199 @@
-# Cloud-SaaS Analytics & Integration Hub
+# Raynet Cloud-SaaS Analytics & Integration Platform
 
 ![Project Logo](/raynet_saas_optimization/frontend/public/logo-gray.png)
 
 ## Overview
 
-Cloud-SaaS Analytics & Integration Hub is a comprehensive SaaS management and analytics platform designed to optimize Microsoft Teams license usage and costs. This enterprise-grade solution provides real-time insights into user activity, license utilization, and cost optimization opportunities.
+Raynet Cloud-SaaS Analytics & Integration Platform is a comprehensive management and analytics solution designed to optimize Microsoft Teams license usage and reduce costs. The platform offers real-time user activity monitoring, license usage analysis, and cost optimization recommendations.
 
-## Features
+## 🚀 Features
 
 ### 📊 Advanced Analytics Dashboard
-- Real-time user activity monitoring
-- Department-wise usage analytics
-- License utilization trends
+- Real-time user activity tracking
+- Department-based usage analytics
+- License utilization trends and forecasting
 - Cost analysis and optimization recommendations
+- Customizable reporting tools
 
 ### 👥 User Management
 - Detailed user profiles with Microsoft integration
-- Department-based organization
-- Activity status tracking
-- Last active time monitoring
+- Department-based organizational structure
+- Activity status monitoring
+- Last active time tracking
+- User behavior analysis
 
 ### 💳 License Management
-- Multiple license tier support:
-  - Microsoft Teams Premium
-  - Microsoft Teams Business
-  - Microsoft Teams Standard
-  - Microsoft Teams Business Basic
+- Multi-tier license support:
+  - Microsoft Teams Premium ($18/user/month)
+  - Microsoft Teams Business ($12.50/user/month)
+  - Microsoft Teams Standard ($10/user/month)
+  - Microsoft Teams Business Basic ($6/user/month)
   - Microsoft Teams (Free)
 - Cost per user tracking
 - License utilization optimization
-- Automated recommendations
+- Automated recommendation system
+- Cost savings reports
 
 ### 📈 Performance Metrics
 - Department distribution analysis
 - User status distribution
 - Average usage time by department
 - Daily and monthly usage trends
+- Customizable metric indicators
 
-## Technology Stack
+## 🛠️ Technology Stack
 
 ### Frontend
-- React.js
-- Recharts for data visualization
-- Styled Components
+- React.js (Modern web interface)
+- Recharts (Data visualization)
+- Styled Components (Style management)
 - Modern ES6+ JavaScript
+- Responsive design
 
 ### Backend
-- FastAPI (Python)
-- PostgreSQL Database
-- SQLAlchemy ORM
-- Pydantic for data validation
+- FastAPI (High-performance Python framework)
+- PostgreSQL (Reliable database)
+- SQLAlchemy ORM (Database management)
+- Pydantic (Data validation)
+- JWT Authentication (Secure access)
 
 ### Deployment
 - Docker containerization
 - Nginx web server
 - Docker Compose orchestration
-- Environment-based configuration
+- Environment-specific configuration
+- SSL/TLS support
 
-## Getting Started
+## 🚀 Getting Started
 
-### Prerequisites
+### System Requirements
 - Docker and Docker Compose
 - Node.js (v14 or higher)
 - Python 3.8+
-- PostgreSQL
+- PostgreSQL 13+
+- 4GB RAM (minimum)
+- 10GB disk space
 
-### Installation
+### Automatic Installation
+1. Run the `start_dashboard.bat` file
+2. Dashboard will automatically open in your browser
+3. Default login credentials:
+   - Username: admin@raynet.com
+   - Password: admin123
 
-1. Clone the repository:
+### Manual Installation
+
+#### Backend Setup
 ```bash
-git clone https://github.com/ernayvaz/raynet_saas_optimization.git
-cd raynet_saas_optimization
+cd raynet_saas_optimization/backend
+python -m venv venv
+venv\Scripts\activate  # For Windows
+source venv/bin/activate  # For Linux/Mac
+pip install -r requirements.txt
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-2. Set up environment variables:
+#### Frontend Setup
 ```bash
-cp backend/password.env.example backend/password.env
-# Edit the password.env file with your database credentials
-```
-
-3. Build and run with Docker Compose:
-```bash
-docker-compose up --build
-```
-
-4. Access the application:
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- API Documentation: http://localhost:8000/docs
-
-## Development Setup
-
-### Frontend Development
-```bash
-cd frontend
+cd raynet_saas_optimization/frontend
 npm install
 npm start
 ```
 
-### Backend Development
+### Docker Installation
 ```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload
+docker-compose up --build
 ```
 
-## API Documentation
+## ⚙️ Configuration
 
-The API documentation is available at `/docs` endpoint when running the backend server. It includes:
-- Detailed endpoint descriptions
-- Request/Response schemas
-- Authentication requirements
-- Interactive API testing interface
-
-## Project Structure
-
-```
-raynet_saas_optimization/
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   └── styles/
-│   ├── public/
-│   └── Dockerfile
-├── backend/
-│   ├── app/
-│   │   ├── crud.py
-│   │   ├── main.py
-│   │   ├── models.py
-│   │   ├── routes.py
-│   │   └── schemas.py
-│   ├── requirements.txt
-│   └── Dockerfile
-└── docker-compose.yml
+### Database Configuration
+Configure the following settings in `backend/password.env`:
+```env
+DB_USERNAME=postgres
+DB_PASSWORD=your_password
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=raynet_db
+JWT_SECRET=your_secret_key
 ```
 
-## Contributing
+### Application Ports
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
+- API Documentation: http://localhost:8000/docs
+- PostgreSQL: 5432
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+## 🔧 Troubleshooting
 
-## License
+### Port Conflicts
+1. Check port usage:
+```bash
+# Windows
+netstat -ano | findstr :8000
+netstat -ano | findstr :3000
+
+# Linux/Mac
+lsof -i :8000
+lsof -i :3000
+```
+
+2. Terminate running process:
+```bash
+# Windows
+taskkill /PID <pid_number> /F
+
+# Linux/Mac
+kill -9 <pid_number>
+```
+
+### Database Issues
+1. PostgreSQL service check:
+```bash
+# Windows
+net start postgresql
+
+# Linux
+sudo service postgresql status
+```
+
+2. Database connection test:
+```bash
+psql -h localhost -U postgres -d raynet_db
+```
+
+### Common Errors and Solutions
+1. "Module not found" error:
+   - Run `pip install -r requirements.txt` again
+   - Ensure virtual environment is activated
+
+2. "npm ERR!" errors:
+   - Delete `node_modules` directory
+   - Run `npm cache clean --force`
+   - Try again with `npm install`
+
+3. Docker errors:
+   - Ensure Docker service is running
+   - Clean all containers with `docker-compose down -v`
+   - Restart with `docker-compose up --build`
+
+## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Authors
+## 👥 Contributors
 
-- **Eren Ayvaz** - *Initial work and maintenance*
+- **Eren Ayvaz** - *Developer and Project Manager*
 
-## Acknowledgments
+## 📞 Support
 
-- Microsoft Teams API Documentation
-- React.js Community
-- FastAPI Framework
-- Docker Community
-
-## Support
-
-For support, please email support@raynet.com or open an issue in the GitHub repository.
+For technical support and inquiries:
+- Email: support@raynet.com
+- GitHub Issues: [Create New Issue](https://github.com/ernayvaz/raynet_saas_optimization/issues)
+- Documentation: [Wiki Page](https://github.com/ernayvaz/raynet_saas_optimization/wiki)
 
 ---
 
 <div align="center">
-  <sub>Built with ❤️ by Eren Ayvaz</sub>
+  <sub>Built with ❤️ by Raynet</sub>
 </div>
