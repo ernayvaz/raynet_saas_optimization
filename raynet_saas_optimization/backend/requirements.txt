@@ -6,12 +6,11 @@ pandas
 python-dotenv
 requests
 pydantic==1.10.10
-psycopg2
 scikit-learn
 xgboost
 httpx
-
-
+fastapi-limiter
+redis
 
 # pip install -r requirements.txt
 # pip freeze   - control code

@@ -7,10 +7,6 @@ from sqlalchemy.orm import Session
 import logging
 import os
 from dotenv import load_dotenv
-from fastapi_limiter import FastAPILimiter
-import redis.asyncio as redis
-from fastapi_cache import FastAPICache
-from fastapi_cache.backends.redis import RedisBackend
 
 # Logging ayarları
 logging.basicConfig(level=logging.INFO)
@@ -23,10 +19,24 @@ app = FastAPI()
 
 # CORS ayarları
 origins = [
-    "http://localhost",
+    "http://localhost:3006",
+    "http://localhost:3007",
+    "http://localhost:3008",
+    "http://127.0.0.1:3006",
+    "http://127.0.0.1:3007",
+    "http://127.0.0.1:3008",
     "http://localhost:3000",
+    "http://localhost:3001",
     "http://localhost:3002",
+    "http://localhost:8000",
     "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+    "http://127.0.0.1:3002",
+    "http://127.0.0.1:8000",
+    "http://localhost:80",
+    "http://127.0.0.1:80",
+    "http://192.168.1.37",
+    "http://192.168.1.37:80"
 ]
 
 # Add error handling
@@ -41,6 +51,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"]
 )
 
 # API rotalarını ekle ve '/api' prefix'ini kullan
@@ -51,19 +62,12 @@ app.include_router(router, prefix="/api")
 def read_root():
     return {"message": "Hello, FastAPI is running successfully!"}
 
-# Run analysis and initialize cache when application starts
+# Run analysis when application starts
 @app.on_event("startup")
 async def startup_event():
     background_tasks = BackgroundTasks()
     background_tasks.add_task(analyze_data, SessionLocal())
-    
-    redis_client = redis.from_url("redis://localhost", encoding="utf8", decode_responses=True)
-    
-    # FastAPICache'i Redis backend ile başlat
-    FastAPICache.init(RedisBackend(redis_client), prefix="fastapi-cache")
 
-    # Rate Limiting için FastAPILimiter başlat
-    await FastAPILimiter.init(redis_client)
 # Ana uygulamada da .env dosyasını yükleyin
 load_dotenv()
 

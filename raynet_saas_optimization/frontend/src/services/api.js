@@ -2,7 +2,9 @@
 
 import axios from 'axios';
 
-const API_BASE_URL = 'http://127.0.0.1:8000/api'; // '/api' prefix'i ekleyin
+const API_BASE_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:8000/api'
+    : `http://${window.location.hostname}:8000/api`;
 
 export const fetchUsers = () => axios.get(`${API_BASE_URL}/users/`);
 export const fetchLicenses = () => axios.get(`${API_BASE_URL}/licenses/`);

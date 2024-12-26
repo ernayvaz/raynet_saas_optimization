@@ -1,17 +1,18 @@
-# Python imajını kullan
-FROM python:3.11.9
+FROM python:3.11-slim
 
-# Çalışma dizinini ayarla
 WORKDIR /app
 
-# Gereksinim dosyasını kopyala
-COPY requirements.txt .
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    postgresql-client \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Gereksinimleri yükle
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Uygulama dosyalarını kopyala
 COPY . .
 
-# Uygulamayı başlat
+EXPOSE 8000
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

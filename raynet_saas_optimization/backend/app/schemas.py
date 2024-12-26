@@ -12,29 +12,20 @@ class RawDataBase(BaseModel):
         orm_mode = True
 
 class UserBase(BaseModel):
-    user_id: str
     email: str
-    department: str
+    department: Optional[str] = None
     status: str
-
-    @validator('status')
-    def status_must_be_valid(cls, v):
-        valid_statuses = ['active', 'inactive', 'suspended']
-        if v.lower() not in valid_statuses:
-            raise ValueError('Invalid status')
-        return v.lower()
 
     class Config:
         orm_mode = True
 
 class UserCreate(UserBase):
-    pass
+    user_id: str
 
 class User(UserBase):
-    pass
+    user_id: str
 
 class LicenseBase(BaseModel):
-    license_id: str
     license_name: str
     cost_per_user: float
     vendor_support_ends_at: Optional[datetime] = None
@@ -43,10 +34,10 @@ class LicenseBase(BaseModel):
         orm_mode = True
 
 class LicenseCreate(LicenseBase):
-    pass
+    license_id: str
 
 class License(LicenseBase):
-    pass
+    license_id: str
 
 class UserLicenseBase(BaseModel):
     user_id: str
@@ -83,7 +74,7 @@ class OptimizationBase(BaseModel):
     user_id: Optional[str] = None
     license_id: Optional[str] = None
     recommendation_text: str
-    created_at: datetime
+    created_at: Optional[datetime] = None
 
     class Config:
         orm_mode = True
@@ -92,4 +83,4 @@ class OptimizationCreate(OptimizationBase):
     pass
 
 class Optimization(OptimizationBase):
-    pass
+    id: int

@@ -37,13 +37,13 @@ def ingest_raw_data(raw_data: schemas.RawDataBase, db: Session = Depends(get_db)
 async def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     try:
         users = await crud.get_users(db, skip=skip, limit=limit)
-        return [schemas.User(
-            user_id=user.user_id,
-            email=user.email,
-            department=user.department or "",
-            status=user.status
-        ) for user in users]
+        print(f"Successfully fetched {len(users)} users")
+        return [schemas.User.from_orm(user) for user in users]
     except Exception as e:
+        print(f"Error fetching users: {str(e)}")
+        print(f"Error type: {type(e)}")
+        import traceback
+        print(f"Traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/users/{user_id}", response_model=schemas.User)
@@ -61,8 +61,22 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 async def read_licenses(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     try:
         licenses = await crud.get_licenses(db, skip=skip, limit=limit)
-        return licenses
+        print(f"Successfully fetched {len(licenses)} licenses")
+        result = []
+        for license in licenses:
+            try:
+                license_data = schemas.License.from_orm(license)
+                result.append(license_data)
+            except Exception as e:
+                print(f"Error converting license {license.license_id}: {str(e)}")
+                # Skip invalid licenses instead of failing the entire request
+                continue
+        return result
     except Exception as e:
+        print(f"Error fetching licenses: {str(e)}")
+        print(f"Error type: {type(e)}")
+        import traceback
+        print(f"Traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/licenses/{license_id}", response_model=schemas.License)
@@ -80,8 +94,13 @@ def create_license(license: schemas.LicenseCreate, db: Session = Depends(get_db)
 async def read_usage_stats(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     try:
         stats = await crud.get_usage_stats(db, skip=skip, limit=limit)
-        return stats
+        print(f"Successfully fetched {len(stats)} usage stats")
+        return [schemas.UsageStats.from_orm(stat) for stat in stats]
     except Exception as e:
+        print(f"Error fetching usage stats: {str(e)}")
+        print(f"Error type: {type(e)}")
+        import traceback
+        print(f"Traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/usage_stats/", response_model=schemas.UsageStats)
@@ -92,8 +111,13 @@ def create_usage_stat(stat: schemas.UsageStatsCreate, db: Session = Depends(get_
 async def read_optimizations(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     try:
         optimizations = await crud.get_optimizations(db, skip=skip, limit=limit)
-        return optimizations
+        print(f"Successfully fetched {len(optimizations)} optimizations")
+        return [schemas.Optimization.from_orm(opt) for opt in optimizations]
     except Exception as e:
+        print(f"Error fetching optimizations: {str(e)}")
+        print(f"Error type: {type(e)}")
+        import traceback
+        print(f"Traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/optimizations/", response_model=schemas.Optimization)
